@@ -24,12 +24,12 @@ public class MessageController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("")
+    @GetMapping("/")
     public List<Message> getAllMessages() {
         return messageService.getAll();
     }
 
-    @PostMapping("")
+    @PostMapping("/")
     public ResponseEntity<Message> create(@RequestBody Message message) {
         if (message.getId() != 0) {
             return new ResponseEntity("redundant param: id MUST be 0", HttpStatus.NOT_ACCEPTABLE);
@@ -37,7 +37,7 @@ public class MessageController {
         if (message.getMessage() == null || message.getMessage().trim().length() == 0) {
             return new ResponseEntity("missed param: message", HttpStatus.NOT_ACCEPTABLE);
         }
-        if (message.getRoomId() == 0) {
+        if (message.getRoom().getId() == 0) {
             return new ResponseEntity("missed param: roomId", HttpStatus.NOT_ACCEPTABLE);
         }
         Person requestUser = userRepository.findByUsername((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
@@ -45,13 +45,16 @@ public class MessageController {
         return ResponseEntity.ok(messageService.save(message));
     }
 
-    @PutMapping("")
+    @PutMapping("/")
     public ResponseEntity<Message> update(@RequestBody Message message) {
         if (message.getId() == 0) {
             return new ResponseEntity("missed param: id", HttpStatus.NOT_ACCEPTABLE);
         }
         if (message.getMessage() == null || message.getMessage().trim().length() == 0) {
             return new ResponseEntity("missed param: message", HttpStatus.NOT_ACCEPTABLE);
+        }
+        if (message.getRoom() == null) {
+            return new ResponseEntity("missed param: room", HttpStatus.NOT_ACCEPTABLE);
         }
         Person requestUser = userRepository.findByUsername((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         if (requestUser.getId() != message.getPersonId()) {

@@ -18,12 +18,12 @@ public class RoomController {
         this.roomRepository = roomRepository;
     }
 
-    @GetMapping("")
+    @GetMapping("/")
     public List<Room> getAllRooms() {
         return roomRepository.findAll();
     }
 
-    @PostMapping("")
+    @PostMapping("/")
     public ResponseEntity<Room> create(@RequestBody Room room) {
         if (room.getId() != 0) {
             return new ResponseEntity("redundant param: id MUST be null", HttpStatus.NOT_ACCEPTABLE);
@@ -34,7 +34,7 @@ public class RoomController {
         return ResponseEntity.ok(roomRepository.save(room));
     }
 
-    @PutMapping("")
+    @PutMapping("/")
     public ResponseEntity<Room> update(@RequestBody Room room) {
         if (room.getId() == 0) {
             return new ResponseEntity("missed param: id", HttpStatus.NOT_ACCEPTABLE);
@@ -48,7 +48,6 @@ public class RoomController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") int roomId) {
-        /* Delete room */
         try {
             roomRepository.deleteById(roomId);
         } catch (EmptyResultDataAccessException e) {

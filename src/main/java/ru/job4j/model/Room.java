@@ -1,5 +1,8 @@
 package ru.job4j.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -10,13 +13,21 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private int id = 0;
+    private int id;
 
-    @Column(name = "room")
+    @Column(name = "name")
     private String name;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<Message> messages;
+
+    public Room() {
+    }
+
+    public Room(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

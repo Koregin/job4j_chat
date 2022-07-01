@@ -1,5 +1,8 @@
 package ru.job4j.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -9,12 +12,13 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private int id = 0;
+    private int id;
 
     @Column(name = "message")
     private String message;
 
-    @ManyToOne
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
 
@@ -37,12 +41,12 @@ public class Message {
         this.message = message;
     }
 
-    public int getRoomId() {
-        return room.getId();
+    public Room getRoom() {
+        return room;
     }
 
-    public void setRoomId(int roomId) {
-        this.room.setId(roomId);
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     public int getPersonId() {
