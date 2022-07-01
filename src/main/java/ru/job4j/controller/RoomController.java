@@ -4,6 +4,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.model.Room;
 import ru.job4j.repository.RoomRepository;
 
@@ -23,13 +24,21 @@ public class RoomController {
         return roomRepository.findAll();
     }
 
+    @GetMapping("/{id}")
+    public Room findById(@PathVariable("id") int roomId) {
+        return roomRepository.findById(roomId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Room with room id = " + roomId + " not found"
+                ));
+    }
+
     @PostMapping("/")
     public ResponseEntity<Room> create(@RequestBody Room room) {
         if (room.getId() != 0) {
-            return new ResponseEntity("redundant param: id MUST be null", HttpStatus.NOT_ACCEPTABLE);
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "redundant param: id MUST be 0");
         }
         if (room.getName() == null || room.getName().trim().length() == 0) {
-            return new ResponseEntity("missed param: name", HttpStatus.NOT_ACCEPTABLE);
+            throw new NullPointerException("missed param: name");
         }
         return ResponseEntity.ok(roomRepository.save(room));
     }
@@ -37,10 +46,10 @@ public class RoomController {
     @PutMapping("/")
     public ResponseEntity<Room> update(@RequestBody Room room) {
         if (room.getId() == 0) {
-            return new ResponseEntity("missed param: id", HttpStatus.NOT_ACCEPTABLE);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "missed param: id");
         }
         if (room.getName() == null || room.getName().trim().length() == 0) {
-            return new ResponseEntity("missed param: name", HttpStatus.NOT_ACCEPTABLE);
+            throw new NullPointerException("missed param: name");
         }
         roomRepository.save(room);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -52,7 +61,7 @@ public class RoomController {
             roomRepository.deleteById(roomId);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            return new ResponseEntity("roomId = " + roomId + " not found", HttpStatus.NOT_ACCEPTABLE);
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "room with roomId = " + roomId + " not found");
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -5,6 +5,7 @@ import ru.job4j.model.Message;
 import ru.job4j.repository.MessageRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MessageService {
@@ -26,7 +27,7 @@ public class MessageService {
         repository.deleteById(messageId);
     }
 
-    public Message findById(int messageId) {
-        return repository.findById(messageId).orElse(null);
+    public Optional<Message> findById(int messageId) {
+        return repository.findById(messageId);
     }
 }
