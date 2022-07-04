@@ -1,9 +1,12 @@
 package ru.job4j.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.model.Person;
 import ru.job4j.model.Role;
+import ru.job4j.model.UserDTO;
 import ru.job4j.repository.RoleRepository;
 import ru.job4j.repository.UserRepository;
 
@@ -35,5 +38,18 @@ public class UserController {
     @GetMapping("/all")
     public List<Person> findAll() {
         return userRepository.findAll();
+    }
+
+    @PatchMapping("/")
+    public ResponseEntity<Void> changeUserPassword(@RequestBody UserDTO userDTO) {
+        Person person = userRepository.findByUsername(userDTO.getUsername());
+        if (person == null) {
+            throw new NullPointerException("User " + userDTO.getUsername() + " not found");
+        }
+        if (userDTO.getPassword() != null || userDTO.getPassword().trim().length() > 0) {
+            person.setPassword(encoder.encode(userDTO.getPassword()));
+        }
+        userRepository.save(person);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

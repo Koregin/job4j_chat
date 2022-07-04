@@ -99,6 +99,32 @@ public class MessageController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PatchMapping("/")
+    public ResponseEntity<Message> patch(@RequestBody Message message) {
+        int messageId = message.getId();
+        if (messageId == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "missed param: id");
+        }
+        Message persistMessage = messageService.findById(messageId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Message with message id = " + messageId + " not found"
+                ));
+        if (message.getMessage() != null) {
+            persistMessage.setMessage(message.getMessage());
+        }
+        if (message.getRoom() != null) {
+            persistMessage.setRoom(message.getRoom());
+        }
+        Person requestUser = userRepository.findByUsername((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        if (requestUser.getId() != persistMessage.getPersonId()) {
+            throw new IllegalArgumentException("This user is not author this message. Patch forbidden!");
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(messageService.save(persistMessage));
+    }
+
+
+
     @ExceptionHandler(value = {IllegalArgumentException.class})
     public void exceptionHandler(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.BAD_REQUEST.value());

@@ -65,4 +65,20 @@ public class RoomController {
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PatchMapping("/")
+    public ResponseEntity<Room> patch(@RequestBody Room room) {
+        if (room.getId() == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "missed param: id");
+        }
+        Room persistRoom = roomRepository.findById(room.getId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Room with room id = " + room.getId() + " not found"
+                ));
+        if (room.getName() != null && room.getName().trim().length() > 0) {
+            persistRoom.setName(room.getName());
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(roomRepository.save(persistRoom));
+    }
 }
