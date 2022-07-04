@@ -3,6 +3,7 @@ package ru.job4j.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,6 +16,7 @@ public class Room {
     private int id;
 
     @Column(name = "name")
+    @NotBlank(message = "Room name must not be empty")
     private String name;
 
     @JsonManagedReference

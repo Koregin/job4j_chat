@@ -15,6 +15,7 @@ import ru.job4j.service.MessageService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +52,7 @@ public class MessageController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Message> create(@RequestBody Message message) {
+    public ResponseEntity<Message> create(@Valid @RequestBody Message message) {
         if (message.getId() != 0) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "redundant param: id MUST be 0");
         }
@@ -68,7 +69,7 @@ public class MessageController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Message> update(@RequestBody Message message) {
+    public ResponseEntity<Message> update(@Valid @RequestBody Message message) {
         if (message.getId() == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "missed param: id");
         }
@@ -100,7 +101,7 @@ public class MessageController {
     }
 
     @PatchMapping("/")
-    public ResponseEntity<Message> patch(@RequestBody Message message) {
+    public ResponseEntity<Message> patch(@Valid @RequestBody Message message) {
         int messageId = message.getId();
         if (messageId == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "missed param: id");

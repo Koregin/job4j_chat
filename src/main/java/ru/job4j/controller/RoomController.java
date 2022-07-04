@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.model.Room;
 import ru.job4j.repository.RoomRepository;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -33,7 +34,7 @@ public class RoomController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Room> create(@RequestBody Room room) {
+    public ResponseEntity<Room> create(@Valid @RequestBody Room room) {
         if (room.getId() != 0) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "redundant param: id MUST be 0");
         }
@@ -44,7 +45,7 @@ public class RoomController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Room> update(@RequestBody Room room) {
+    public ResponseEntity<Room> update(@Valid @RequestBody Room room) {
         if (room.getId() == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "missed param: id");
         }
@@ -67,7 +68,7 @@ public class RoomController {
     }
 
     @PatchMapping("/")
-    public ResponseEntity<Room> patch(@RequestBody Room room) {
+    public ResponseEntity<Room> patch(@Valid @RequestBody Room room) {
         if (room.getId() == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "missed param: id");
         }

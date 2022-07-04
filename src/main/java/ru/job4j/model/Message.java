@@ -3,6 +3,7 @@ package ru.job4j.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Entity
@@ -14,6 +15,7 @@ public class Message {
     private int id;
 
     @Column(name = "message")
+    @NotBlank(message = "Message must not be empty")
     private String message;
 
     @JsonBackReference

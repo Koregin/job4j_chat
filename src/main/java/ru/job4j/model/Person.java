@@ -1,6 +1,8 @@
 package ru.job4j.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,9 +16,13 @@ public class Person {
     private int id;
 
     @Column(name = "username")
+    @NotBlank(message = "Username must not be empty")
+    @Size(min = 2, max = 255, message = "Username length should be between 2 and 255")
     private String username;
 
     @Column(name = "password")
+    @NotBlank(message = "Password must not be empty")
+    @Size(min = 5, max = 255, message = "Password length should be greater than 5 and less than 255")
     private String password;
 
     @OneToMany(fetch = FetchType.LAZY)

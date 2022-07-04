@@ -10,6 +10,7 @@ import ru.job4j.model.UserDTO;
 import ru.job4j.repository.RoleRepository;
 import ru.job4j.repository.UserRepository;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping("/sign-up")
-    public void signUp(@RequestBody Person person) {
+    public void signUp(@Valid @RequestBody Person person) {
         person.setPassword(encoder.encode(person.getPassword()));
         List<Role> userRoles = new ArrayList<>();
         userRoles.add(roleRepository.findByName("ROLE_USER"));
@@ -41,7 +42,7 @@ public class UserController {
     }
 
     @PatchMapping("/")
-    public ResponseEntity<Void> changeUserPassword(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<Void> changeUserPassword(@Valid @RequestBody UserDTO userDTO) {
         Person person = userRepository.findByUsername(userDTO.getUsername());
         if (person == null) {
             throw new NullPointerException("User " + userDTO.getUsername() + " not found");
