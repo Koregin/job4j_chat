@@ -36,16 +36,18 @@ public class MessageController {
     }
 
     @GetMapping("/")
-    public List<Message> getAllMessages() {
-        return messageService.getAll();
+    public ResponseEntity<List<Message>> getAllMessages() {
+        List<Message> messages =  messageService.getAll();
+        return ResponseEntity.status(HttpStatus.OK).body(messages);
     }
 
     @GetMapping("/{id}")
-    public Message findById(@PathVariable("id") int messageId) {
-        return messageService.findById(messageId)
+    public ResponseEntity<Message> findById(@PathVariable("id") int messageId) {
+        Message message = messageService.findById(messageId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Message with message id = " + messageId + " not found"
                 ));
+        return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 
     @PostMapping("/")
@@ -61,7 +63,8 @@ public class MessageController {
         }
         Person requestUser = userRepository.findByUsername((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         message.setPersonId(requestUser.getId());
-        return ResponseEntity.ok(messageService.save(message));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(messageService.save(message));
     }
 
     @PutMapping("/")
@@ -80,7 +83,7 @@ public class MessageController {
             throw new IllegalArgumentException("This user is not author this message. Update forbidden!");
         }
         messageService.save(message);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 
     @DeleteMapping("/{id}")
